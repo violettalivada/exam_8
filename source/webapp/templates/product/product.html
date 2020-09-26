@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block title %}View{% endblock %}
+
+{% block menu %}
+    <li class="nav-item my-2"><a class="nav-link" href="{% url 'webapp:product_update' product.pk %}">Редактировать</a></li>
+    <li class="nav-item my-2"><a class="nav-link" href="{% url 'webapp:product_delete' product.pk %}">Удалить</a></li>
+    <li class="nav-item my-2"><a class="nav-link" href="{% url 'webapp:product_review_add' product.pk %}">Добавить отзыв</a></li>
+{% endblock %}
+
+{% block content %}
+    <div class="card text-center">
+        <div class="card-header">{{ product.get_category_display }}</div>
+        <div class="card-body">
+            <h5 class="card-title">{{ product.name }}</h5>
+            <p class="card-text">{{ product.description }}</p>
+            <p class="card-text">{{ product.reviews.get_avg_rating|default_if_none:0 }}</p>
+            {% if product.img%}
+                <img class="card-img-left" src="{{ product.img.url }}" width="250" height="250" alt="product picture">
+            {% else %}
+                <img class="card-img-left" src="{% static 'img/default.png' %}" width="250" height="250" alt="product picture">
+            {% endif %}
+            <div class="card-footer my-2">
+            {% if perms.webapp.change_product %}
+            <a href="{% url 'webapp:product_update' product.pk %}" class="card-link">
+                <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-pencil-square" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456l-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                    <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
+                </svg>
+            </a>
+            {% endif %}
+            {% if perms.webapp.delete_product %}
+            <a href="{% url 'webapp:product_delete' product.pk %}" class="card-link">
+                <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-file-earmark-minus" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9 1H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h5v-1H4a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h5v2.5A1.5 1.5 0 0 0 10.5 6H13v2h1V6L9 1z"/>
+                    <path fill-rule="evenodd" d="M11 11.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5z"/>
+                </svg>
+            </a>
+            {% endif %}
+            </div>
+        </div>
+            <hr/>
+    <h3>Отзывы:</h3>
+    {% for review in reviews %}
+    <div class="card text-center my-2">
+        <div class="card-header"><a class="card-link" href="#">{{ review.author }}({{ user_obj.author.email }})</a></div>
+        <div class="card-body">
+        <div class="card-text">
+        <h4>Оценка: ({{ review.rating }})</h4>
+
+        </div>
+        <div class="card-text pre">{{ review.text }}</div>
+        <div class="card-text">
+        {% if perms.webapp.change_review or review.author == request.user %}
+            <a class="card-link mr-5 mb-2" href="{% url 'webapp:review_update' review.pk %}" style="float:right;">
+                <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-pen" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" d="M5.707 13.707a1 1 0 0 1-.39.242l-3 1a1 1 0 0 1-1.266-1.265l1-3a1 1 0 0 1 .242-.391L10.086 2.5a2 2 0 0 1 2.828 0l.586.586a2 2 0 0 1 0 2.828l-7.793 7.793zM3 11l7.793-7.793a1 1 0 0 1 1.414 0l.586.586a1 1 0 0 1 0 1.414L5 13l-3 1 1-3z"/>
+                    <path fill-rule="evenodd" d="M9.854 2.56a.5.5 0 0 0-.708 0L5.854 5.855a.5.5 0 0 1-.708-.708L8.44 1.854a1.5 1.5 0 0 1 2.122 0l.293.292a.5.5 0 0 1-.707.708l-.293-.293z"/>
+                    <path d="M13.293 1.207a1 1 0 0 1 1.414 0l.03.03a1 1 0 0 1 .03 1.383L13.5 4 12 2.5l1.293-1.293z"/>
+                </svg>
+            </a>
+        {% endif %}
+        {% if perms.webapp.delete_review or review.author == request.user %}
+            <a class="card-link mr-3" href="{% url 'webapp:review_delete' review.pk %}" style="float:right;">
+                <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-trash" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                    <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4L4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                </svg>
+            </a>
+        {% endif %}
+        </div>
+    {% empty %}
+        <p>Нет отзывов</p>
+    {% endfor %}
+        </div>
+    </div>
+    </div>
+    </div>
+{% endblock %}

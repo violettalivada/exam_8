@@ -19,9 +19,11 @@
       <li class="nav-item active my-2">
         <a class="nav-link" href="{% url 'webapp:index' %}">На главную <span class="sr-only">(current)</span></a>
       </li>
-      <li class="nav-item my-2">
-        <a class="nav-link" href=""></a>
-      </li>
+        {% if perms.webapp.add_project %}
+            <li class="nav-item my-2">
+                <a class="nav-link" href="{% url 'webapp:product_create' %}">Добавить товар/услугу</a>
+            </li>
+        {% endif %}
             <li class="nav-item my-2">
                 <a class="nav-link" href=""></a>
             </li>
@@ -38,14 +40,6 @@
             <li class="nav-item my-2"><a class="nav-link" href=""></a></li>
             <li class="nav-item my-2"><a class="nav-link" href=""></a></li>
     </ul>
-    {% block search %}
-        <div class="search-form">
-            <form class="form-inline my-2 my-lg-0" action="{% url 'webapp:index' %}" method="GET">
-                {{ search_form.search }}
-                <input class="form-control mr-sm-2" type="submit" value="Найти">
-            </form>
-        </div>
-    {% endblock %}
   </div>
 </nav>
 <div class="container">

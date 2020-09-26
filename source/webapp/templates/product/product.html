@@ -19,7 +19,7 @@
         <div class="card-body">
             <h5 class="card-title">{{ product.name }}</h5>
             <p class="card-text">{{ product.description }}</p>
-            <p class="card-text">{{ product.reviews.get_avg_rating|default_if_none:0 }}</p>
+            <p class="card-text">Средняя оценка: {{ product.get_avg_rating|default_if_none:0 }}</p>
             {% if product.img%}
                 <img class="card-img-left" src="{{ product.img.url }}" width="250" height="250" alt="product picture">
             {% else %}

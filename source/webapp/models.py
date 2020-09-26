@@ -25,6 +25,16 @@ class Product(models.Model):
     def __str__(self):
         return f'{self.pk}. {self.name}'
 
+    def get_avg_rating(self):
+        total = 0
+        reviews = Review.objects.filter(product=self.pk)
+        if reviews:
+            for i in reviews:
+                total += int(i.rating)
+            return total / len(reviews)
+        else:
+            return total
+
     class Meta:
         verbose_name = 'Товар/Услуга'
         verbose_name_plural = 'Товары/Услуги'
@@ -40,9 +50,6 @@ class Review(models.Model):
 
     def __str__(self):
         return f'{self.author} | {self.product}'
-
-    def get_avg_rating(self):
-        return self.rating
 
     class Meta:
         verbose_name = 'Отзыв'
